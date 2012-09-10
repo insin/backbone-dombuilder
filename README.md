@@ -1,14 +1,12 @@
-# DomBuilder
-
-[![Build Status](https://secure.travis-ci.org/creationix/dombuilder.png)](http://travis-ci.org/creationix/dombuilder)
-
+# backbone-dombuilder
 
 Dombuilder is a simple library that makes it easy to generate dom nodes from a JSON-like structure.
+
+This fork makes use of dependencies a Backbone.js app will already have to enable compatibility with IE8.
 
 ## Usage
 
 The module is a single function exported as the global `domBuilder` or through an AMD style module as the `dombuilder` package.
-
 
 ```js
 // Create a hash to store element references
@@ -21,7 +19,7 @@ var template = [
       ["#address", "Sunnyvale, California" ]
     ],
     // native event handlers, not a string to be evaled.
-    [".right.column", { onclick: function (evt) { alert("Foo!"); } }, 
+    [".right.column", { onclick: function (evt) { alert("Foo!"); } },
       ["#email", "tim@creationix.com" ],
       ["#bio", "Cool Guy" ]
     ]
@@ -41,7 +39,7 @@ var template = [
   ["p", "Inspect the source (not view source) to see how clean this dom is!"]
 ];
 
-// Calling the function with the template and storage hash will return the root 
+// Calling the function with the template and storage hash will return the root
 // node (or document fragment is there are multiple root nodes).
 var root = domBuilder(template, $);
 ```

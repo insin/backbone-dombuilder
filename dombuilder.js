@@ -18,10 +18,10 @@ function domBuilder(json, refs) {
   if (typeof json === 'string') return document.createTextNode(json);
 
   // Pass through html elements as-is
-  if (json instanceof HTMLElement) return json;
+  if (_.isElement(json)) return json;
 
   // Stringify any other value types
-  if (!Array.isArray(json)) return document.createTextNode(json + "");
+  if (!_.isArray(json)) return document.createTextNode(json + "");
 
   // Empty arrays are just empty fragments.
   if (!json.length) return document.createDocumentFragment();
@@ -38,7 +38,7 @@ function domBuilder(json, refs) {
         node = document.createElement(tag);
         first = true;
         var classes = part.match(CLASS_MATCH);
-        if (classes) node.setAttribute('class', classes.map(stripFirst).join(' '));
+        if (classes) node.setAttribute('class', _.map(classes, stripFirst).join(' '));
         var id = part.match(ID_MATCH);
         if (id) node.setAttribute('id', id[0].substr(1));
         var ref = part.match(REF_MATCH);
@@ -50,7 +50,9 @@ function domBuilder(json, refs) {
     }
 
     // Except the first item if it's an attribute object
-    if (first && typeof part === 'object' && part.__proto__ === Object.prototype) {
+    if (first && typeof part === 'object' && (part.__proto__
+                                              ? part.__proto__ === Object.prototype
+                                              : jQuery.isPlainObject(part))) {
       setAttrs(node, part);
     } else {
       node.appendChild(domBuilder(part, refs));
@@ -61,7 +63,7 @@ function domBuilder(json, refs) {
 };
 
 function setAttrs(node, attrs) {
-  var keys = Object.keys(attrs);
+  var keys = _.keys(attrs);
   for (var i = 0, l = keys.length; i < l; i++) {
     var key = keys[i];
     var value = attrs[key];
@@ -70,7 +72,12 @@ function setAttrs(node, attrs) {
     } else if (key === "css") {
       setStyle(node.style, value);
     } else if (key.substr(0, 2) === "on") {
-      node.addEventListener(key.substr(2), value, false);
+      if (node.addEventListener) {
+        node.addEventListener(key.substr(2), value, false)
+      }
+      else {
+        node[key] = value;
+      }
     } else {
       node.setAttribute(key, value);
     }
@@ -78,7 +85,7 @@ function setAttrs(node, attrs) {
 }
 
 function setStyle(style, attrs) {
-  var keys = Object.keys(attrs);
+  var keys = _.keys(attrs);
   for (var i = 0, l = keys.length; i < l; i++) {
     var key = keys[i];
     style[key] = attrs[key];
