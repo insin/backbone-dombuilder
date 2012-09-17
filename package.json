@@ -1,8 +1,8 @@
 {
   "name": "backbone-dombuilder",
-  "version": "0.1.0-mod1",
+  "version": "0.1.0-mod.1",
   "description": "Fork of creationix/dombuilder which uses Backbone.js dependencies for IE8 compatibility",
-  "main": "dombuilder.js",
+  "main": "./dombuilder.js",
   "scripts": {
     "test": "phantomjs test.js"
   },
